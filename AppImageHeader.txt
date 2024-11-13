@@ -1,0 +1,13 @@
+#!/bin/bash
+clear
+HOMEPATH="`pwd`"
+EXTRACTFILE=`mktemp`
+echo ${EXTRACTFILE}
+DIRPATH=`mktemp -u`
+echo ${DIRPATH}
+tail -n +${NUMBEROFLINES} "$0" > ${EXTRACTFILE} #${NUMBEROFLINES} replaced from buildit.sh
+unsquashfs -d ${DIRPATH} ${EXTRACTFILE}
+`${DIRPATH}/AppRun`
+rm ${EXTRACTFILE}
+rm -r ${DIRPATH}
+exit 1
