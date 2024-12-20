@@ -12,6 +12,4 @@ It uses squashfs.
 
 I still need to find and copy lib files
 
-ldd 0_FULL_GAME | awk 'NF == 4 { system("echo cp " $3 " destdir") }'
-Replace destdir with your directory of choice. Once the displayed commands look OK, remove the echo to actually copy, eg:
-ldd 0_FULL_GAME | awk 'NF == 4 { system("cp " $3 " chosen-dir") }'
+ldd ~/SpaceNerdsInSpaceDir/usr/bin/snis_client | awk 'NF == 4 { system("echo cp " $3 " ~/SpaceNerdsInSpaceDir/usr/lib/") }'
