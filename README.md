@@ -12,4 +12,4 @@ It uses squashfs.
 
 I still need to find and copy lib files
 
-ldd ~/Your.AppDir/usr/bin/snis_client | awk 'NF == 4 { system("echo cp " $3 " ~/Your.AppDir/usr/lib/") }'
+ldd ~/Your.AppDir/usr/bin/snis_client | awk 'NF == 4 { system("cp " $3 " ~/Your.AppDir/usr/lib/") }'
