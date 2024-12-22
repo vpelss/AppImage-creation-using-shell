@@ -1,13 +1,13 @@
 #!/bin/sh
 clear
 HEADERSCRIPT="AppImageHeader.txt"
+EXEC="${FOLDERTOSQUASH}/usr/bin/*"
 FOLDERTOSQUASH="Your.AppDir"
 TEMPSQUASHFS="Temp.squashfs "
 APPIMAGENAME="Your.AppImage"
 #get required lib(s)
-ldd ~/${FOLDERTOSQUASH}/usr/bin/bin/* | awk -v AppDir=${FOLDERTOSQUASH}/ 'NF == 4 { system("cp " $3 " " AppDir"/usr/lib/") }'
-echo "Start AppImage build of ${APPIMAGENAME} "
-
+export AppDirAWK="$AppDir"
+ldd ${EXEC} | awk -v AppDir=$FOLDERTOSQUASH 'NF == 4 { echo system("cp " $3 " " ENVIRON["AppDirAWK"] "/usr/lib/") }'echo "Start AppImage build of ${APPIMAGENAME} "
 TEMPSTRING=`cat ${HEADERSCRIPT}`  #load file to string
 TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  #remove last whitespace?
 
