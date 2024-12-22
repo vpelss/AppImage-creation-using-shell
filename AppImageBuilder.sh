@@ -5,7 +5,7 @@ FOLDERTOSQUASH="Your.AppDir"
 TEMPSQUASHFS="Temp.squashfs "
 APPIMAGENAME="Your.AppImage"
 #get required lib(s)
-ldd ~/${FOLDERTOSQUASH}/usr/bin/exefile(s) | awk 'NF == 4 { system("cp " $3 " ~/${FOLDERTOSQUASH}/usr/lib/") }'
+ldd ~/${FOLDERTOSQUASH}/usr/bin/bin/* | awk -v AppDir=${FOLDERTOSQUASH}/ 'NF == 4 { system("cp " $3 " " AppDir"/usr/lib/") }'
 echo "Start AppImage build of ${APPIMAGENAME} "
 
 TEMPSTRING=`cat ${HEADERSCRIPT}`  #load file to string
