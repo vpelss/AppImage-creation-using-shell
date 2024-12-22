@@ -5,9 +5,17 @@ EXEC="${FOLDERTOSQUASH}/usr/bin/*"
 FOLDERTOSQUASH="Your.AppDir"
 TEMPSQUASHFS="Temp.squashfs "
 APPIMAGENAME="Your.AppImage"
+
 #get required lib(s)
 export AppDirAWK="$AppDir"
 ldd ${EXEC} | awk -v AppDir=$FOLDERTOSQUASH 'NF == 4 { echo system("cp " $3 " " ENVIRON["AppDirAWK"] "/usr/lib/") }'echo "Start AppImage build of ${APPIMAGENAME} "
+
+#my AppRun uses mkdir so if build system mkdir uses different libc.. error. I have copied build system mkdir to AppImage to 'fix'
+#package an internal mkdir and sh to fix libc issues
+mkdir $FOLDERTOSQUASH/bin
+cp /bin/mkdir $FOLDERTOSQUASH/bin
+chmod +x $FOLDERTOSQUASH/bin/mkdir
+
 TEMPSTRING=`cat ${HEADERSCRIPT}`  #load file to string
 TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  #remove last whitespace?
 
