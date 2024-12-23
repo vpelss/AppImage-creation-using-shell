@@ -9,8 +9,8 @@ Download:
 - AppImageBuilder.sh
 - AppImageHeader.txt
 
-Edit
-- Download:
+Edit variables in:
+- AppImageBuilder.sh
 
 These can work too:
 https://makeself.io/
