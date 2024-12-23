@@ -15,6 +15,10 @@ It has a simplistic find and place lib files routine.
 3. Edit variables in:
 - AppImageBuilder.sh
 
+4. chmod +x AppImageBuilder.sh
+
+5. Run AppImageBuilder.sh
+
 These can work too:
 https://makeself.io/
 git clone https://github.com/megastep/makeself.git
