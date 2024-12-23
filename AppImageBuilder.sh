@@ -5,25 +5,27 @@
 #same if part of app runs bin/sh
 
 clear
-HEADERSCRIPT="AppImageHeader.txt"
-EXEC="${FOLDERTOSQUASH}/usr/bin/*"
-FOLDERTOSQUASH="Your.AppDir"
-TEMPSQUASHFS="Temp.squashfs "
-APPIMAGENAME="Your.AppImage"
+HEADERSCRIPT="AppImageHeader.txt" # This file will be placed at the head of the .AppImage file to run
+EXEC="${FOLDERTOSQUASH}/usr/bin/*" # folder where binary files are. We need to see what lib files they use and copy them later
+FOLDERTOSQUASH="Your.AppDir" # the AppDir you need to set up first!
+TEMPSQUASHFS="Temp.squashfs" # any name will do
+APPIMAGENAME="Your.AppImage" # the name of the created AppImage
 
 #get required lib(s)
-export AppDirAWK="$AppDir"
-ldd ${EXEC} | awk -v AppDir=$FOLDERTOSQUASH 'NF == 4 { echo system("cp " $3 " " ENVIRON["AppDirAWK"] "/usr/lib/") }'echo "Start AppImage build of ${APPIMAGENAME} "
+export AppDirAWK="$AppDir" # so we can use $AppDir in AWK
+ldd ${EXEC} | awk -v AppDir=$FOLDERTOSQUASH 'NF == 4 { echo system("cp " $3 " " ENVIRON["AppDirAWK"] "/usr/lib/") }'
 
-#my AppRun uses mkdir so if build system mkdir uses different libc than yours, error. I have copied build system mkdir to AppImage to 'fix'
-#package an internal mkdir to fix libc issues
+echo "Start AppImage build of ${APPIMAGENAME} "
+
+#my AppRun uses mkdir so if build system mkdir uses different libc than yours, error. I have copied build system mkdir to AppImage to 'fix'. mkdir in my AppRun needs point to this version!
 mkdir $FOLDERTOSQUASH/bin
 cp /bin/mkdir $FOLDERTOSQUASH/bin
 chmod +x $FOLDERTOSQUASH/bin/mkdir
 
-TEMPSTRING=`cat ${HEADERSCRIPT}`  #load file to string
-TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  #remove last whitespace?
+TEMPSTRING=`cat ${HEADERSCRIPT}`  # load headerscrpt file to string
+TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  # remove last whitespace?
 
+#how many lines does it have?
 NUMBEROFLINEFEEDS=$(echo "${TEMPSTRING}" | wc -l )
 NUMBEROFLINES=$((NUMBEROFLINEFEEDS+1))
 
@@ -34,7 +36,8 @@ echo "${TEMPSTRING}" | awk -v find='${NUMBEROFLINES}' -v repl=${NUMBEROFLINES} '
     print
 }'  > ${APPIMAGENAME}
 
+# mksquashfs AppDir and append it to ${APPIMAGENAME}
 mksquashfs ${FOLDERTOSQUASH} ${TEMPSQUASHFS} -root-owned -noappend
 cat ${TEMPSQUASHFS} >> ${APPIMAGENAME}
-chmod a+x ${APPIMAGENAME}
-rm ${TEMPSQUASHFS}
+chmod a+x ${APPIMAGENAME} 
+rm ${TEMPSQUASHFS} # cleanup
