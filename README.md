@@ -5,11 +5,14 @@ It uses squashfs.
 
 It has a simplistic find and place lib files routine.
 
-Download:
+1. Create an Appropriate AppDir folder with icon, AppRun, app.desktop files and appropriate folder structure
+- See: https://docs.appimage.org/reference/appdir.html
+
+2. Download:
 - AppImageBuilder.sh
 - AppImageHeader.txt
 
-Edit variables in:
+3. Edit variables in:
 - AppImageBuilder.sh
 
 These can work too:
