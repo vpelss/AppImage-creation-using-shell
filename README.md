@@ -1,15 +1,11 @@
 # AppImageShell
 
-Alternate shell version. However it does not find and place lib files
+Alternate shell version to create an AppImage. 
+It uses squashfs.
+
+It has a simplistic find and place lib files routine.
 
 This works too:
 https://makeself.io/
 git clone https://github.com/megastep/makeself.git
 eg: makeself/makeself.sh --threads=0 AppDir myimage.sh label ./AppRun
-
-I am trying to make my own, simpler, all shell version.
-It uses squashfs.
-
-I still need to find and copy lib files
-
-ldd ~/Your.AppDir/usr/bin/exefile(s) | awk 'NF == 4 { system("cp " $3 " ~/Your.AppDir/usr/lib/") }'
