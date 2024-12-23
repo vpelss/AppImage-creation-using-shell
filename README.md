@@ -1,4 +1,5 @@
-# AppImageShell
+# AppImage creation using shell
+
 
 Alternate shell version to create an AppImage. 
 It uses squashfs.
