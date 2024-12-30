@@ -7,7 +7,16 @@ DIRPATH=`mktemp -u -p ${HOMEPATH}`
 echo ${DIRPATH}
 # ${NUMBEROFLINES} replaced from buildit.sh
 tail -n +${NUMBEROFLINES} "$0" > ${EXTRACTFILE}
-unsquashfs -d ${DIRPATH} ${EXTRACTFILE}
+if which unsquashfs 
+	then
+		unsquashfs -d ${DIRPATH} ${EXTRACTFILE}
+	else
+		echo
+		echo "You need to install squashfs-tools:"
+		echo "sudo apt install squashfs-tools"
+		echo 
+		exit
+fi
 # export LD_LIBRARY_PATH="${DIRPATH}/usr/lib/"
 `${DIRPATH}/AppRun`
 rm ${EXTRACTFILE}
