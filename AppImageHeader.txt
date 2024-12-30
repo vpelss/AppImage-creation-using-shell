@@ -1,15 +1,15 @@
-#!/bin/bash
-#DO NOT EDIT THIS CODE. This will be placed th the head of the .AppImage file to run
+#!/bin/sh
 clear
 HOMEPATH="`pwd`"
 EXTRACTFILE=`mktemp`
-#echo ${EXTRACTFILE}
-DIRPATH=`mktemp -u`
+echo ${EXTRACTFILE}
+DIRPATH=`mktemp -u -p ${HOMEPATH}`
 echo ${DIRPATH}
-tail -n +${NUMBEROFLINES} "$0" > ${EXTRACTFILE} # ${NUMBEROFLINES} will be replaced from code in AppImageBuilder.sh
+# ${NUMBEROFLINES} replaced from buildit.sh
+tail -n +${NUMBEROFLINES} "$0" > ${EXTRACTFILE}
 unsquashfs -d ${DIRPATH} ${EXTRACTFILE}
-export LD_LIBRARY_PATH="${DIRPATH}/usr/lib/" #we need to proudly display appimage lib files
+# export LD_LIBRARY_PATH="${DIRPATH}/usr/lib/"
 `${DIRPATH}/AppRun`
-rm ${EXTRACTFILE} # clean up extracted file after shutdown
-rm -r ${DIRPATH} # clean up unsquashed files
+rm ${EXTRACTFILE}
+rm -r ${DIRPATH}
 exit 1
