@@ -25,9 +25,8 @@ export PATH="${FOLDERTOSQUASH}/usr/lib:${FOLDERTOSQUASH}/usr/include:$PATH"
 echo "Start AppImage build of ${APPIMAGENAME} "
 
 TEMPSTRING=`cat ${HEADERSCRIPT}`  #load file to string
-echo "1"
 TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  #remove last whitespace?
-echo "2"
+
 NUMBEROFLINEFEEDS=$(echo "${TEMPSTRING}" | wc -l )
 NUMBEROFLINES=$((NUMBEROFLINEFEEDS+1))
 
@@ -38,7 +37,16 @@ echo "${TEMPSTRING}" | awk -v find='${NUMBEROFLINES}' -v repl=${NUMBEROFLINES} '
     print
 }'  > ${APPIMAGENAME}
 
-mksquashfs ${FOLDERTOSQUASH} ${TEMPSQUASHFS} -root-owned -noappend
+if which mksquashfs 
+	then
+		mksquashfs ${FOLDERTOSQUASH} ${TEMPSQUASHFS} -root-owned -noappend
+	else
+		echo
+		echo "You need to install squashfs-tools:"
+		echo "sudo apt install squashfs-tools"
+		echo 
+		exit
+fi
 cat ${TEMPSQUASHFS} >> ${APPIMAGENAME}
 chmod a+x ${APPIMAGENAME}
 rm ${TEMPSQUASHFS}
