@@ -1,31 +1,33 @@
 #!/bin/sh
-
-#issues:
-#my AppRun uses mkdir so if build system mkdir uses different libc.. error. I have copied build system mkdir to AppImage to 'fix'
-#same if part of app runs bin/sh
-
 clear
-HEADERSCRIPT="AppImageHeader.txt" # This file will be placed at the head of the .AppImage file to run
-EXEC="${FOLDERTOSQUASH}/usr/bin/*" # folder where binary files are. We need to see what lib files they use and copy them later
-FOLDERTOSQUASH="Your.AppDir" # the AppDir you need to set up first!
-TEMPSQUASHFS="Temp.squashfs" # any name will do
-APPIMAGENAME="Your.AppImage" # the name of the created AppImage
+# set to your properly created and formatted AppDir, complete withh all required files. this script attempts to find and add lib files
+FOLDERTOSQUASH="SpaceNerdsInSpaceDir"
+# a temp folder to build AppImage with
+TEMPSQUASHFS="Temp.squashfs"
+# the exe filename to build
+APPIMAGENAME="Your.AppImage"
+# all the exe files. they will be scanned for lib dependancies
+EXEC="${FOLDERTOSQUASH}/usr/bin/*"
 
-#get required lib(s)
-export AppDirAWK="$AppDir" # so we can use $AppDir in AWK
-ldd ${EXEC} | awk -v AppDir=$FOLDERTOSQUASH 'NF == 4 { echo system("cp " $3 " " ENVIRON["AppDirAWK"] "/usr/lib/") }'
+# required as the header to boot the AppImage. do not edit it.
+HEADERSCRIPT="AppImageHeader.txt"
+
+export AppDirAWK=${FOLDERTOSQUASH}
+ldd ${EXEC} | awk 'NF == 4 { echo system("cp " $3 " " ENVIRON["AppDirAWK"] "/usr/lib/") }'
+# ldd $AppDir/usr/bin/snis_client | awk  'NF == 4 {  system("echo cp " $3 " " ENVIRON["AppDirAWK"]"/usr/lib/") }'
+
+#remove libc
+rm ${EXEC}/usr/lib/libc.*
+
+#set path
+export PATH="${FOLDERTOSQUASH}/usr/lib:${FOLDERTOSQUASH}/usr/include:$PATH"
 
 echo "Start AppImage build of ${APPIMAGENAME} "
 
-#my AppRun uses mkdir so if build system mkdir uses different libc than yours, error. I have copied build system mkdir to AppImage to 'fix'. mkdir in my AppRun needs point to this version!
-mkdir $FOLDERTOSQUASH/bin
-cp /bin/mkdir $FOLDERTOSQUASH/bin
-chmod +x $FOLDERTOSQUASH/bin/mkdir
-
-TEMPSTRING=`cat ${HEADERSCRIPT}`  # load headerscrpt file to string
-TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  # remove last whitespace?
-
-#how many lines does it have?
+TEMPSTRING=`cat ${HEADERSCRIPT}`  #load file to string
+echo "1"
+TEMPSTRING=echo ${TEMPSTRING} | sed '$d'  #remove last whitespace?
+echo "2"
 NUMBEROFLINEFEEDS=$(echo "${TEMPSTRING}" | wc -l )
 NUMBEROFLINES=$((NUMBEROFLINEFEEDS+1))
 
@@ -36,8 +38,7 @@ echo "${TEMPSTRING}" | awk -v find='${NUMBEROFLINES}' -v repl=${NUMBEROFLINES} '
     print
 }'  > ${APPIMAGENAME}
 
-# mksquashfs AppDir and append it to ${APPIMAGENAME}
 mksquashfs ${FOLDERTOSQUASH} ${TEMPSQUASHFS} -root-owned -noappend
 cat ${TEMPSQUASHFS} >> ${APPIMAGENAME}
-chmod a+x ${APPIMAGENAME} 
-rm ${TEMPSQUASHFS} # cleanup
+chmod a+x ${APPIMAGENAME}
+rm ${TEMPSQUASHFS}
