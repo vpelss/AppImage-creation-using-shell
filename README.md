@@ -1,4 +1,4 @@
-# AppImage creation using shell
+# AppImage like creation using shell
 
 
 Alternate shell version to create an AppImage. 
